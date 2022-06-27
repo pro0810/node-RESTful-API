@@ -15,7 +15,7 @@ describe('User routes', () => {
 
     beforeEach(() => {
       newUser = {
-        name: faker.name.findName(),
+        username: faker.name.findName(),
         email: faker.internet.email().toLowerCase(),
         password: 'password1',
         role: 'user',
@@ -34,7 +34,7 @@ describe('User routes', () => {
       expect(res.body).not.toHaveProperty('password');
       expect(res.body).toEqual({
         id: expect.anything(),
-        name: newUser.name,
+        username: newUser.username,
         email: newUser.email,
         role: newUser.role,
         isEmailVerified: false,
@@ -43,7 +43,12 @@ describe('User routes', () => {
       const dbUser = await User.findById(res.body.id);
       expect(dbUser).toBeDefined();
       expect(dbUser.password).not.toBe(newUser.password);
-      expect(dbUser).toMatchObject({ name: newUser.name, email: newUser.email, role: newUser.role, isEmailVerified: false });
+      expect(dbUser).toMatchObject({
+        username: newUser.username,
+        email: newUser.email,
+        role: newUser.role,
+        isEmailVerified: false,
+      });
     });
 
     test('should be able to create an admin as well', async () => {
@@ -160,7 +165,7 @@ describe('User routes', () => {
       expect(res.body.results).toHaveLength(3);
       expect(res.body.results[0]).toEqual({
         id: userOne._id.toHexString(),
-        name: userOne.name,
+        name: userOne.username,
         email: userOne.email,
         role: userOne.role,
         isEmailVerified: userOne.isEmailVerified,
@@ -189,7 +194,7 @@ describe('User routes', () => {
       const res = await request(app)
         .get('/v1/users')
         .set('Authorization', `Bearer ${adminAccessToken}`)
-        .query({ name: userOne.name })
+        .query({ username: userOne.username })
         .send()
         .expect(httpStatus.OK);
 
@@ -278,7 +283,7 @@ describe('User routes', () => {
       const res = await request(app)
         .get('/v1/users')
         .set('Authorization', `Bearer ${adminAccessToken}`)
-        .query({ sortBy: 'role:desc,name:asc' })
+        .query({ sortBy: 'role:desc,username:asc' })
         .send()
         .expect(httpStatus.OK);
 
@@ -298,7 +303,7 @@ describe('User routes', () => {
         if (a.role > b.role) {
           return -1;
         }
-        return a.name < b.name ? -1 : 1;
+        return a.username < b.username ? -1 : 1;
       });
 
       expectedOrder.forEach((user, index) => {
@@ -364,7 +369,7 @@ describe('User routes', () => {
       expect(res.body).toEqual({
         id: userOne._id.toHexString(),
         email: userOne.email,
-        name: userOne.name,
+        username: userOne.username,
         role: userOne.role,
         isEmailVerified: userOne.isEmailVerified,
       });
@@ -482,7 +487,7 @@ describe('User routes', () => {
     test('should return 200 and successfully update user if data is ok', async () => {
       await insertUsers([userOne]);
       const updateBody = {
-        name: faker.name.findName(),
+        username: faker.name.findName(),
         email: faker.internet.email().toLowerCase(),
         password: 'newPassword1',
       };
@@ -496,7 +501,7 @@ describe('User routes', () => {
       expect(res.body).not.toHaveProperty('password');
       expect(res.body).toEqual({
         id: userOne._id.toHexString(),
-        name: updateBody.name,
+        username: updateBody.username,
         email: updateBody.email,
         role: 'user',
         isEmailVerified: false,
@@ -505,19 +510,19 @@ describe('User routes', () => {
       const dbUser = await User.findById(userOne._id);
       expect(dbUser).toBeDefined();
       expect(dbUser.password).not.toBe(updateBody.password);
-      expect(dbUser).toMatchObject({ name: updateBody.name, email: updateBody.email, role: 'user' });
+      expect(dbUser).toMatchObject({ username: updateBody.username, email: updateBody.email, role: 'user' });
     });
 
     test('should return 401 error if access token is missing', async () => {
       await insertUsers([userOne]);
-      const updateBody = { name: faker.name.findName() };
+      const updateBody = { username: faker.name.findName() };
 
       await request(app).patch(`/v1/users/${userOne._id}`).send(updateBody).expect(httpStatus.UNAUTHORIZED);
     });
 
     test('should return 403 if user is updating another user', async () => {
       await insertUsers([userOne, userTwo]);
-      const updateBody = { name: faker.name.findName() };
+      const updateBody = { username: faker.name.findName() };
 
       await request(app)
         .patch(`/v1/users/${userTwo._id}`)
@@ -528,7 +533,7 @@ describe('User routes', () => {
 
     test('should return 200 and successfully update user if admin is updating another user', async () => {
       await insertUsers([userOne, admin]);
-      const updateBody = { name: faker.name.findName() };
+      const updateBody = { username: faker.name.findName() };
 
       await request(app)
         .patch(`/v1/users/${userOne._id}`)
@@ -539,7 +544,7 @@ describe('User routes', () => {
 
     test('should return 404 if admin is updating another user that is not found', async () => {
       await insertUsers([admin]);
-      const updateBody = { name: faker.name.findName() };
+      const updateBody = { username: faker.name.findName() };
 
       await request(app)
         .patch(`/v1/users/${userOne._id}`)
@@ -550,7 +555,7 @@ describe('User routes', () => {
 
     test('should return 400 error if userId is not a valid mongo id', async () => {
       await insertUsers([admin]);
-      const updateBody = { name: faker.name.findName() };
+      const updateBody = { username: faker.name.findName() };
 
       await request(app)
         .patch(`/v1/users/invalidId`)

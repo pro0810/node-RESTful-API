@@ -23,7 +23,7 @@ describe('Auth routes', () => {
     let newUser;
     beforeEach(() => {
       newUser = {
-        name: faker.name.findName(),
+        username: faker.name.findName(),
         email: faker.internet.email().toLowerCase(),
         password: 'password1',
       };
@@ -35,7 +35,7 @@ describe('Auth routes', () => {
       expect(res.body.user).not.toHaveProperty('password');
       expect(res.body.user).toEqual({
         id: expect.anything(),
-        name: newUser.name,
+        username: newUser.username,
         email: newUser.email,
         role: 'user',
         isEmailVerified: false,
@@ -44,7 +44,12 @@ describe('Auth routes', () => {
       const dbUser = await User.findById(res.body.user.id);
       expect(dbUser).toBeDefined();
       expect(dbUser.password).not.toBe(newUser.password);
-      expect(dbUser).toMatchObject({ name: newUser.name, email: newUser.email, role: 'user', isEmailVerified: false });
+      expect(dbUser).toMatchObject({
+        username: newUser.username,
+        email: newUser.email,
+        role: 'user',
+        isEmailVerified: false,
+      });
 
       expect(res.body.tokens).toEqual({
         access: { token: expect.anything(), expires: expect.anything() },
@@ -94,7 +99,7 @@ describe('Auth routes', () => {
 
       expect(res.body.user).toEqual({
         id: expect.anything(),
-        name: userOne.name,
+        username: userOne.username,
         email: userOne.email,
         role: userOne.role,
         isEmailVerified: userOne.isEmailVerified,
