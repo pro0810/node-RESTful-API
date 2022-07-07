@@ -1,5 +1,5 @@
 const express = require('express');
-const helmet = require('helmet');
+// const helmet = require('helmet');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
@@ -22,7 +22,16 @@ if (config.env !== 'test') {
 }
 
 // set security HTTP headers
-app.use(helmet());
+// app.use(helmet());
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     useDefaults: true,
+//     directives: {
+//       frameAncestors: ["'self'", 'http://10.97.33.190:3011/paper/*'],
+//       scriptSrc: ["'self'", "'unsafe-inline'"],
+//     },
+//   })
+// );
 
 // parse json request body
 app.use(express.json());
@@ -47,11 +56,11 @@ passport.use('jwt', jwtStrategy);
 
 // limit repeated failed requests to auth endpoints
 if (config.env === 'production') {
-  app.use('/v1/auth', authLimiter);
+  app.use('/auth', authLimiter);
 }
 
 // v1 api routes
-app.use('/v1', routes);
+app.use('/', routes);
 
 // send back a 404 error for any unknown api request
 app.use((req, res, next) => {
