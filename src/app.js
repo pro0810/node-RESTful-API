@@ -1,5 +1,5 @@
 const express = require('express');
-// const helmet = require('helmet');
+const helmet = require('helmet');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
@@ -22,16 +22,7 @@ if (config.env !== 'test') {
 }
 
 // set security HTTP headers
-// app.use(helmet());
-// app.use(
-//   helmet.contentSecurityPolicy({
-//     useDefaults: true,
-//     directives: {
-//       frameAncestors: ["'self'", 'http://10.97.33.190:3011/paper/*'],
-//       scriptSrc: ["'self'", "'unsafe-inline'"],
-//     },
-//   })
-// );
+app.use(helmet());
 
 // parse json request body
 app.use(express.json());
