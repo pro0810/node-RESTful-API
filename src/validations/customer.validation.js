@@ -1,12 +1,15 @@
 const Joi = require('joi');
 const { password, objectId } = require('./custom.validation');
+const { roles } = require('../config/customers');
 
 const createCustomer = {
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().custom(password),
     name: Joi.string().required(),
-    role: Joi.string().required().valid('user', 'admin'),
+    role: Joi.string()
+      .required()
+      .valid(...roles),
     isEmailVerified: Joi.boolean(),
   }),
 };
@@ -34,7 +37,7 @@ const updateCustomer = {
   body: Joi.object()
     .keys({
       // email: Joi.string().email(),
-      // role: Joi.string(),
+      role: Joi.string().valid(...roles),
       isEmailVerified: Joi.boolean(),
       name: Joi.string(),
     })

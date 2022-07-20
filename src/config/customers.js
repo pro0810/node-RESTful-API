@@ -1,4 +1,4 @@
-const roles = ['customer'];
+const roles = ['customer', 'trial'];
 
 module.exports = {
   roles,
