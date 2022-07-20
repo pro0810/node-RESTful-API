@@ -23,8 +23,8 @@ const createCustomer = async (customerBody) => {
  * @param {number} [options.page] - Current page (default = 1)
  * @returns {Promise<QueryResult>}
  */
-const queryCustomers = async (filter, options) => {
-  const customers = await Customer.paginate(filter, options);
+const queryCustomers = async (filter, options, search) => {
+  const customers = await Customer.paginate(filter, options, search);
   return customers;
 };
 

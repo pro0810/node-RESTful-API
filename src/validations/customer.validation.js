@@ -12,10 +12,10 @@ const createCustomer = {
 
 const getCustomers = {
   query: Joi.object().keys({
-    username: Joi.string(),
-    role: Joi.string(),
-    sortBy: Joi.string(),
-    limit: Joi.number().integer(),
+    search: Joi.string(),
+    order: Joi.string(),
+    sort: Joi.string(),
+    items_per_page: Joi.number().integer(),
     page: Joi.number().integer(),
   }),
 };
