@@ -22,7 +22,7 @@ const getCustomer = catchAsync(async (req, res) => {
   if (!customer) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Customer not found');
   }
-  res.send(customer);
+  res.send({ data: customer });
 });
 
 const updateCustomer = catchAsync(async (req, res) => {
