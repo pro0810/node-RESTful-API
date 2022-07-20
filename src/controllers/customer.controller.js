@@ -12,6 +12,7 @@ const createCustomer = catchAsync(async (req, res) => {
 const getCustomers = catchAsync(async (req, res) => {
   const filter = pick(req.query, ['name', 'role']);
   const search = pick(req.query, ['search']);
+  search.name = 'name';
   const options = pick(req.query, ['sort', 'items_per_page', 'page', 'order']);
   const result = await customerService.queryCustomers(filter, options, search);
   res.send(result);

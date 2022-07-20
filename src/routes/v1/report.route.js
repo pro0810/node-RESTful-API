@@ -1,38 +1,38 @@
 const express = require('express');
 const auth = require('../../middlewares/auth');
 const validate = require('../../middlewares/validate');
-const customerValidation = require('../../validations/customer.validation');
-const customerController = require('../../controllers/customer.controller');
+const reportValidation = require('../../validations/report.validation');
+const reportController = require('../../controllers/report.controller');
 
 const router = express.Router();
 
 router
   .route('/')
-  .post(auth('manageCustomers'), validate(customerValidation.createCustomer), customerController.createCustomer)
-  .get(auth('getCustomers'), validate(customerValidation.getCustomers), customerController.getCustomers);
+  .post(auth('manageReports'), validate(reportValidation.createReport), reportController.createReport)
+  .get(auth('getReports'), validate(reportValidation.getReports), reportController.getReports);
 
 router
-  .route('/:customerId')
-  .get(auth('getCustomers'), validate(customerValidation.getCustomer), customerController.getCustomer)
-  .post(auth('manageCustomers'), validate(customerValidation.updateCustomer), customerController.updateCustomer)
-  .delete(auth('manageCustomers'), validate(customerValidation.deleteCustomer), customerController.deleteCustomer);
+  .route('/:reportId')
+  .get(auth('getReports'), validate(reportValidation.getReport), reportController.getReport)
+  .post(auth('manageReports'), validate(reportValidation.updateReport), reportController.updateReport)
+  .delete(auth('manageReports'), validate(reportValidation.deleteReport), reportController.deleteReport);
 
 module.exports = router;
 
 /**
  * @swagger
  * tags:
- *   name: Customers
- *   description: Customer management and retrieval
+ *   name: Reports
+ *   description: Report management and retrieval
  */
 
 /**
  * @swagger
- * /customers:
+ * /reports:
  *   post:
- *     summary: Create a customer
- *     description: Only admins can create other customers.
- *     tags: [Customers]
+ *     summary: Create a report
+ *     description: Only admins can create other reports.
+ *     tags: [Reports]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -60,19 +60,19 @@ module.exports = router;
  *                 description: At least one number and one letter
  *               role:
  *                  type: string
- *                  enum: [customer, admin]
+ *                  enum: [report, admin]
  *             example:
  *               name: fake name
  *               email: fake@example.com
  *               password: password1
- *               role: customer
+ *               role: report
  *     responses:
  *       "201":
  *         description: Created
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Customer'
+ *                $ref: '#/components/schemas/Report'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -81,9 +81,9 @@ module.exports = router;
  *         $ref: '#/components/responses/Forbidden'
  *
  *   get:
- *     summary: Get all customers
- *     description: Only admins can retrieve all customers.
- *     tags: [Customers]
+ *     summary: Get all reports
+ *     description: Only admins can retrieve all reports.
+ *     tags: [Reports]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -91,12 +91,12 @@ module.exports = router;
  *         name: name
  *         schema:
  *           type: string
- *         description: Customer name
+ *         description: Report name
  *       - in: query
  *         name: role
  *         schema:
  *           type: string
- *         description: Customer role
+ *         description: Report role
  *       - in: query
  *         name: sortBy
  *         schema:
@@ -108,7 +108,7 @@ module.exports = router;
  *           type: integer
  *           minimum: 1
  *         default: 10
- *         description: Maximum number of customers
+ *         description: Maximum number of reports
  *       - in: query
  *         name: page
  *         schema:
@@ -127,7 +127,7 @@ module.exports = router;
  *                 results:
  *                   type: array
  *                   items:
- *                     $ref: '#/components/schemas/Customer'
+ *                     $ref: '#/components/schemas/Report'
  *                 page:
  *                   type: integer
  *                   example: 1
@@ -148,11 +148,11 @@ module.exports = router;
 
 /**
  * @swagger
- * /customers/{id}:
+ * /reports/{id}:
  *   get:
- *     summary: Get a customer
- *     description: Logged in customers can fetch only their own customer information. Only admins can fetch other customers.
- *     tags: [Customers]
+ *     summary: Get a report
+ *     description: Logged in reports can fetch only their own report information. Only admins can fetch other reports.
+ *     tags: [Reports]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -161,14 +161,14 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Customer id
+ *         description: Report id
  *     responses:
  *       "200":
  *         description: OK
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Customer'
+ *                $ref: '#/components/schemas/Report'
  *       "401":
  *         $ref: '#/components/responses/Unauthorized'
  *       "403":
@@ -177,9 +177,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   patch:
- *     summary: Update a customer
- *     description: Logged in customers can only update their own information. Only admins can update other customers.
- *     tags: [Customers]
+ *     summary: Update a report
+ *     description: Logged in reports can only update their own information. Only admins can update other reports.
+ *     tags: [Reports]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -188,7 +188,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Customer id
+ *         description: Report id
  *     requestBody:
  *       required: true
  *       content:
@@ -217,7 +217,7 @@ module.exports = router;
  *         content:
  *           application/json:
  *             schema:
- *                $ref: '#/components/schemas/Customer'
+ *                $ref: '#/components/schemas/Report'
  *       "400":
  *         $ref: '#/components/responses/DuplicateEmail'
  *       "401":
@@ -228,9 +228,9 @@ module.exports = router;
  *         $ref: '#/components/responses/NotFound'
  *
  *   delete:
- *     summary: Delete a customer
- *     description: Logged in customers can delete only themselves. Only admins can delete other customers.
- *     tags: [Customers]
+ *     summary: Delete a report
+ *     description: Logged in reports can delete only themselves. Only admins can delete other reports.
+ *     tags: [Reports]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -239,7 +239,7 @@ module.exports = router;
  *         required: true
  *         schema:
  *           type: string
- *         description: Customer id
+ *         description: Report id
  *     responses:
  *       "200":
  *         description: No content

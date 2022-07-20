@@ -7,6 +7,7 @@ const createCustomer = {
     password: Joi.string().required().custom(password),
     name: Joi.string().required(),
     role: Joi.string().required().valid('user', 'admin'),
+    isEmailVerified: Joi.boolean(),
   }),
 };
 
@@ -32,7 +33,8 @@ const updateCustomer = {
   }),
   body: Joi.object()
     .keys({
-      email: Joi.string().email(),
+      // email: Joi.string().email(),
+      // role: Joi.string(),
       isEmailVerified: Joi.boolean(),
       name: Joi.string(),
     })

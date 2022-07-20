@@ -6,6 +6,8 @@
  *  - replaces _id with id
  */
 
+const moment = require('moment');
+
 const deleteAtPath = (obj, path, index) => {
   if (index === path.length - 1) {
     delete obj[path[index]];
@@ -31,6 +33,8 @@ const toJSON = (schema) => {
       ret.id = ret._id.toString();
       delete ret._id;
       delete ret.__v;
+      if (ret.createdAt) ret.createdAt = moment(ret.createdAt).format('MMM D, YYYY');
+      if (ret.updatedAt) ret.updatedAt = moment(ret.updatedAt).format('MMM D, YYYY');
       // delete ret.createdAt;
       // delete ret.updatedAt;
       if (transform) {

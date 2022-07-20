@@ -47,7 +47,7 @@ const paginate = (schema) => {
       const $regex = escapeStringRegexp(search.search);
       filter = {
         ...filter,
-        name: { $regex },
+        [search.name]: { $regex },
       };
     }
     const countPromise = this.countDocuments(filter).exec();
